@@ -17,6 +17,8 @@ void TicTacToeGame::setup(LiquidCrystal_I2C* lcd, TicTacToeArm* arm, Keypad* key
 	this->ui.attachArm(this->arm);
 	this->keypad[0] = keypad_primary;
 	this->keypad[1] = keypad_secondary;
+
+	this->scores = new TicTacToeGameData();
 }
 
 void TicTacToeGame::resetGame() {
@@ -29,12 +31,6 @@ void TicTacToeGame::resetGame() {
 
 	this->lastPlayer = -1;
 	this->arm->home();
-}
-
-void TicTacToeGame::resetScores() {
-	for(int i = 0; i < 3; i++) {
-		this->scores[i] = 0;
-	}
 }
 
 void TicTacToeGame::refreshScreen() {
@@ -61,11 +57,11 @@ void TicTacToeGame::loop() {
 			this->lcd->print(F("Tic-Tac-Toe Robot v1"));
 			this->lcd->setCursor(0, 1);
 			this->lcd->print(F("Score X:"));
-			this->lcd->print(this->scores[TicTacToeCell::X]);
+			this->lcd->print(this->scores->getPlayerScore(TicTacToeCell::X));
 			this->lcd->print(F(" O:"));
-			this->lcd->print(this->scores[TicTacToeCell::O]);
+			this->lcd->print(this->scores->getPlayerScore(TicTacToeCell::O));
 			this->lcd->print(F(" T:"));
-			this->lcd->print(this->scores[TicTacToeCell::EMPTY]);
+			this->lcd->print(this->scores->getPlayerScore(TicTacToeCell::EMPTY));
 			this->lcd->setCursor(0, 2);
 			this->lcd->print(F("[1] 1P [2] 2P [0] AI"));
 			this->lcd->setCursor(0, 3);
@@ -74,7 +70,7 @@ void TicTacToeGame::loop() {
 			DEBUG << "Reset game.";
 			this->resetGame();
 
-			DEBUG << "Scores: Tie[" << this->scores[TicTacToeCell::EMPTY] << "] X[" << this->scores[TicTacToeCell::X] << "] O[" << this->scores[TicTacToeCell::O] << "]";
+			DEBUG << "Scores: Tie[" << this->scores->getPlayerScore(TicTacToeCell::EMPTY) << "] X[" << this->scores->getPlayerScore(TicTacToeCell::X) << "] O[" << this->scores->getPlayerScore(TicTacToeCell::O) << "]";
 			while((current_key = this->keypad[0]->readKey()) == Keypad::keyNone) {
 				this->refreshScreen();
 				continue;
@@ -187,7 +183,7 @@ void TicTacToeGame::loop() {
 					}
 
 					this->ui.drawWinner(winnerData);
-					this->scores[winnerData.player]++;
+					this->scores->incrementPlayerScore(winnerData.player);
 					this->state = STATE_GETPLAYERS;
 					delay(3000);
 				}
@@ -224,7 +220,7 @@ void TicTacToeGame::interruptMenu(Keypad* keypad) {
 			break;
 
 		case '1':
-			this->resetScores();
+			this->scores->resetScores();
 			break;
 
 		case '*':

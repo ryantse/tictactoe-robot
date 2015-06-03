@@ -3,6 +3,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <avr/interrupt.h>
 #include <avr/wdt.h>
+#include <avr/eeprom.h>
 #include <util/atomic.h>
 #include "Debug.h"
 #include "TicTacToeGame.h"

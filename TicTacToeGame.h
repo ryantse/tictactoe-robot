@@ -16,6 +16,7 @@
 #include "TicTacToePlayer.h"
 #include "TicTacToePlayerAI.h"
 #include "TicTacToePlayerHuman.h"
+#include "TicTacToeGameData.h"
 
 class TicTacToeGame {
 	public:
@@ -27,7 +28,6 @@ class TicTacToeGame {
 
 	private:
 		void resetGame();
-		void resetScores();
 
 		enum gameState { STATE_GETPLAYERS, STATE_PLAYING, STATE_INTERRUPTMENU };
 		enum gameType { TYPE_UNSET, TYPE_SINGLEPLAYER, TYPE_TWOPLAYER, TYPE_AI };
@@ -38,7 +38,7 @@ class TicTacToeGame {
 		TicTacToeBoard* board;
 		Keypad* keypad[2];
 
-		int scores[3] = {0,0,0};
+		TicTacToeGameData* scores;
 		int lastPlayer = -1;
 
 		TicTacToeUI ui;
