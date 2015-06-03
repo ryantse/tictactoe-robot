@@ -5,8 +5,11 @@ TicTacToeGame::TicTacToeGame() {
 }
 
 void TicTacToeGame::setup(LiquidCrystal_I2C* lcd, TicTacToeArm* arm, Keypad* keypad_primary, Keypad* keypad_secondary) {
+	byte refreshScreenChar[8] = {B00000, B00000, B00000, B00000, B00000, B00000, B00000, B00001};
+	
 	this->lcd = lcd;
-	lcd->begin(20,4);
+	this->lcd->begin(20,4);
+	this->lcd->createChar(0, refreshScreenChar);
 
 	this->arm = arm;
 	this->arm->home(0);
@@ -38,7 +41,11 @@ void TicTacToeGame::refreshScreen() {
 	if(this->lcd != NULL) {
 		DEBUG << "Refreshing screen.";
 		this->lcd->setCursor(19,3);
-		this->lcd->print((random(0,1000) > 500) ? F(".") : F(" "));
+		if(random(0,1000) > 500) {
+			this->lcd->write(byte(0));
+		} else {
+			this->lcd->print(F(" "));
+		}
 	}
 }
 
